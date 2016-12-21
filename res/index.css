@@ -1,0 +1,62 @@
+body {
+  font-family: "Pingfang SC", "Heiti SC", "Source Han Sans SC", "Microsoft Yahei", Helvetica, Arial, sans-serif;
+  background-image: url("images/bg.jpg");
+  background-size: cover;
+}
+#main_container {
+  background-color: rgba(255, 255, 255, 0.7);
+  width: 1000px;
+  height: 700px;
+  border-radius: 20px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+}
+#main_container > :first-child {
+  border-radius: 20px 20px 0 0;
+  background-color: #0277BD;
+  height: 100px;
+  color: whitesmoke;
+  display: flex;
+  align-items: center;
+}
+#main_container > :first-child > :first-child {
+  flex: 1;
+  padding-left: 50px;
+}
+#main_container > :first-child > :nth-child(2) {
+  margin-right: 10px;
+  font-size: 14px;
+  text-align: right;
+}
+#main_container > :first-child > :nth-child(3) {
+  padding-right: 30px;
+  font-size: 30px;
+}
+#main_container > :last-child {
+  flex: 1;
+  display: flex;
+}
+#main_container > :last-child > :first-child {
+  border-radius: 0 0 0 20px;
+  width: 200px;
+  background-color: #01579B;
+}
+#main_container > :last-child > :first-child li {
+  font-size: 16px;
+}
+#main_container > :last-child > :first-child li a {
+  padding-left: 50px;
+  color: #e0e0e0;
+}
+#main_container > :last-child > :first-child li.active a {
+  background-color: #B3E5FC;
+  color: #333333;
+}
+#main_container > :last-child > :first-child li span {
+  margin-right: 10px;
+}
+#main_container > :last-child > :last-child {
+  flex: 1;
+  padding: 20px;
+}
