@@ -3,6 +3,13 @@ body {
   background-image: url("images/bg.jpg");
   background-size: cover;
 }
+#loading {
+  position: absolute;
+  width: 100%;
+  top: 150px;
+  text-align: center;
+  color: whitesmoke;
+}
 #login_container {
   width: 500px;
   margin: 100px auto 0 auto;
