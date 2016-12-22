@@ -2,7 +2,6 @@
     #search {
         height: 100%;
     }
-
     #search > div {
         display: flex;
         flex-direction: column;
@@ -10,30 +9,42 @@
         margin-top: -50px;
         justify-content: center;
     }
-
+    #result_container {
+        margin-top: 10px;
+    }
     .hotel_result {
         display: flex;
         align-items: center;
-        margin-bottom: 15px;
+        padding: 10px 0;
+        border-top: #333333 solid 1px;
     }
-
     .hotel_info {
         flex: 1;
         margin-left: 20px;
     }
-
     .hotel_name {
         font-size: 18px;
         color: #01579B;
     }
-
     .hotel_addr {
         font-size: 12px;
         color: gray;
     }
-
     .hotel_tags {
         font-size: 18px;
+    }
+    .hotel_rank {
+        text-align: center;
+        color: green;
+    }
+    .hotel_price {
+        margin-right: 15px;
+        width: 100px;
+        text-align: right;
+    }
+    .hotel_price span {
+        color: orangered;
+        font-size: 28px;
     }
 </style>
 
@@ -42,7 +53,7 @@
 </div>
 <div class="page" id="search">
     <div>
-        <div class="title">你要去哪儿？</div>
+        <div class="title">你要在哪开房？</div>
         <div class="form-inline">
             <select id="select_city" class="form-control"></select>
             <select id="select_area" class="form-control"></select>
@@ -53,6 +64,16 @@
     </div>
 </div>
 <div class="page" id="result">
+    <div id="sort">
+        <ul class="nav nav-pills">
+            <li data-sortby="default" data-desc="0" class="active"><a href="javascript:">默认排序</a></li>
+            <li data-sortby="price" data-desc="0"><a href="javascript:">价格低 <i class="fa fa-long-arrow-right"></i> 高</a></li>
+            <li data-sortby="price" data-desc="1"><a href="javascript:">价格高 <i class="fa fa-long-arrow-right"></i> 低</a></li>
+            <li data-sortby="star" data-desc="0"><a href="javascript:">星级低 <i class="fa fa-long-arrow-right"></i> 高</a></li>
+            <li data-sortby="star" data-desc="1"><a href="javascript:">星级高 <i class="fa fa-long-arrow-right"></i> 低</a></li>
+            <li data-sortby="rank" data-desc="1"><a href="javascript:">评分高 <i class="fa fa-long-arrow-right"></i> 低</a></li>
+        </ul>
+    </div>
     <div id="result_container">
     </div>
 </div>
@@ -76,52 +97,102 @@
                 $('#loading-inline').fadeIn(200, function () {
                     app.requests.post('HotelBL/search', [$('#select_area').val()], function (resp) {
                         results = resp;
-                        for (var key in resp) {
-                            var hotel = resp[key];
-                            // calculate average rank
-                            hotel.avg_rank = 0.0;
-                            if (hotel.ranks.length > 0) {
-                                hotel.avg_rank = hotel.ranks.map(function (a) { return a.rank; })
-                                        .reduce(function (a, b) { return a + b; }) / hotel.ranks.length;
-                            }
-                            // process orders
-                            var tags = '';
-                            if (hotel.orders.length > 0) {
-                                tags += '<span class="label label-primary">我预定过</span> ';
-                                // calculate undo & delayed count
-                                var undo_count = hotel.orders.filter(function (a) { return a.state == 'UNDO'; }).length,
-                                    delayed_count = hotel.orders.filter(function (a) { return a.state == 'DELAYED'; }).length,
-                                    normal_count = hotel.orders.length - undo_count - delayed_count;
-                                if (normal_count > 0) {
-                                    tags += '<span class="label label-success">正常订单 ' + normal_count + '</span> ';
-                                }
-                                if (delayed_count > 0) {
-                                    tags += '<span class="label label-danger">异常订单 ' + delayed_count + '</span> ';
-                                }
-                                if (undo_count > 0) {
-                                    tags += '<span class="label label-warning">撤销订单 ' + undo_count + '</span> ';
-                                }
-                            }
-                            $('#result_container').append('<div class="hotel_result" data-key="' + key + '">\
-                                <div><i class="fa fa-5x fa-building-o"></i></div>\
-                                <div class="hotel_info">\
-                                    <div class="hotel_name">' + hotel.name + '</div>\
-                                    <div class="hotel_addr">' + hotel.address + '</div>\
-                                    <div class="hotel_rank">' + hotel.avg_rank.toFixed(1) + ' / 5.0</div>\
-                                    <div class="hotel_tags">\
-                                        <span class="label label-default">' + hotel.star + '</span> ' + tags + '\
-                                    </div>\
-                                </div>\
-                                <div></div>\
-                                <div></div>\
-                            </div>');
-                        }
+                        show_results(results);
                         openPage('#result');
                     }, function () {
                         app.view.showError('搜索酒店失败: 发生网络通信错误');
                     });
                 });
             });
+        });
+
+        // ----- Page: result -----
+        // show results
+        var show_results = function (res) {
+            var container = $('#result_container');
+            container.html('');
+            for (var key in res) {
+                var hotel = res[key];
+                // calculate average rank
+                hotel.avg_rank = 0;
+                if (hotel.ranks.length > 0) {
+                    hotel.avg_rank = hotel.ranks.map(function (a) { return a.rank; })
+                            .reduce(function (a, b) { return a + b; }) / hotel.ranks.length;
+                }
+                var rank_star = '';
+                for (var i = 1; i <= hotel.avg_rank; i++) {
+                    rank_star += '<i class="fa fa-lg fa-star"></i>';
+                }
+                if (hotel.avg_rank - Math.floor(hotel.avg_rank) > 0) {
+                    rank_star += '<i class="fa fa-lg fa-star-half-o"></i>';
+                }
+                for (var i = hotel.avg_rank; i < 5; i++) {
+                    rank_star += '<i class="fa fa-lg fa-star-o"></i>';
+                }
+                // calculate min price
+                hotel.min_price = hotel.rooms.sort(function (a, b) { return a.price - b.price })[0].price;
+                // process orders
+                var tags = '';
+                if (hotel.orders.length > 0) {
+                    tags += '<span class="label label-primary">我预定过</span> ';
+                    // calculate undo & delayed count
+                    var undo_count = hotel.orders.filter(function (a) { return a.state == 'UNDO'; }).length,
+                        delayed_count = hotel.orders.filter(function (a) { return a.state == 'DELAYED'; }).length,
+                        normal_count = hotel.orders.length - undo_count - delayed_count;
+                    if (normal_count > 0) {
+                        tags += '<span class="label label-success">正常订单 ' + normal_count + '</span> ';
+                    }
+                    if (delayed_count > 0) {
+                        tags += '<span class="label label-danger">异常订单 ' + delayed_count + '</span> ';
+                    }
+                    if (undo_count > 0) {
+                        tags += '<span class="label label-warning">撤销订单 ' + undo_count + '</span> ';
+                    }
+                }
+                container.append('<div class="hotel_result" data-key="' + key + '">\
+                    <div><i class="fa fa-5x fa-building-o"></i></div>\
+                    <div class="hotel_info">\
+                        <div class="hotel_name">' + hotel.name + '</div>\
+                        <div class="hotel_addr">' + hotel.address + '</div>\
+                        <div class="hotel_tags">\
+                            <span class="label label-default">' + hotel.star + '</span> ' + tags + '\
+                        </div>\
+                    </div>\
+                    <div class="hotel_rank">\
+                        <div>' + rank_star + '</div>\
+                        <div>' + hotel.avg_rank.toFixed(1) + ' / 5.0</div>\
+                    </div>\
+                    <div class="hotel_price">\
+                        <span>¥' + hotel.min_price + '</span> 起\
+                    </div>\
+                    <div>\
+                        <div><button class="btn btn-sm btn-primary">详情</button></div>\
+                        <div style="margin-top: 5px;"><button class="btn btn-sm btn-danger">预订</button></div>\
+                    </div>\
+                </div>');
+            }
+        };
+        // sort
+        var sort_options = $('#sort').find('li');
+        sort_options.click(function () {
+            sort_options.removeClass('active');
+            $(this).addClass('active');
+            var sortby = $(this).attr('data-sortby');
+            var asc = $(this).attr('data-desc') == '1' ? -1 : 1;
+            var sorted_results = results.slice().sort(function (a, b) {
+                switch (sortby) {
+                    case 'default':
+                        return 0;
+                    case 'price':
+                        return asc * (a.min_price - b.min_price);
+                    case 'star':
+                        var stars = ['一星级', '二星级', '三星级', '四星级', '五星级'];
+                        return asc * (stars.indexOf(a.star) - stars.indexOf(b.star));
+                    case 'rank':
+                        return asc * (a.avg_rank - b.avg_rank);
+                }
+            });
+            show_results(sorted_results);
         });
     })();
 </script>
