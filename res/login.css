@@ -1,0 +1,45 @@
+body {
+  font-family: "Pingfang SC", "Heiti SC", "Source Han Sans SC", "Microsoft Yahei", Helvetica, Arial, sans-serif;
+  background-image: url("images/bg.jpg");
+  background-size: cover;
+}
+#login_container {
+  width: 500px;
+  margin: 100px auto 0 auto;
+}
+#login_container > :first-child {
+  text-align: center;
+}
+#login_container > :nth-child(2) {
+  margin-top: 30px;
+  background-color: whitesmoke;
+  padding: 10px;
+  border-radius: 10px;
+}
+#login_container > :nth-child(2) > input {
+  width: 100%;
+  height: 32px;
+  background-color: whitesmoke;
+  border-style: none;
+  font-size: 18px;
+}
+#login_container > :nth-child(2) > div {
+  width: 100%;
+  height: 0;
+  border-bottom: gray solid 1px;
+}
+#login_container > :last-child {
+  margin-top: 20px;
+  display: flex;
+  padding: 0 10px;
+}
+#login_container > :last-child > :first-child {
+  flex: 1;
+  color: whitesmoke;
+}
+#login_container > :last-child > :first-child .checkbox {
+  margin: 0;
+}
+#login_container > :last-child > :first-child a {
+  color: #81D4FA;
+}

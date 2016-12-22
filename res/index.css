@@ -40,7 +40,7 @@ body {
 #main_container > :last-child > :first-child {
   border-radius: 0 0 0 20px;
   width: 200px;
-  background-color: #01579B;
+  background-color: #424242;
 }
 #main_container > :last-child > :first-child li {
   font-size: 16px;
