@@ -1,0 +1,37 @@
+body {
+  font-family: "Pingfang SC", "Heiti SC", "Source Han Sans SC", "Microsoft Yahei", Helvetica, Arial, sans-serif;
+  background-image: url("images/bg.jpg");
+  background-size: cover;
+}
+
+#loading {
+  position: absolute;
+  width: 100%;
+  top: 150px;
+  text-align: center;
+  color: whitesmoke;
+}
+
+@keyframes shake {
+  25% {
+    margin-left: -10px;
+  }
+
+  75% {
+    margin-left: 10px;
+  }
+
+  100% {
+    margin-left: 0;
+  }
+}
+
+.shake {
+  animation-name: shake;
+  animation-duration: 150ms;
+  animation-iteration-count: 3;
+}
+
+.modal-title .error {
+  color: crimson;
+}

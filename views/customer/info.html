@@ -1,0 +1,60 @@
+<style type="text/css">
+    .flex-table {
+        margin: 20px;
+        width: 50%;
+    }
+    .flex-table > div > :first-child {
+        width: 100px;
+    }
+</style>
+
+<div class="title">个人基本信息</div>
+<div class="loading-inline">
+    <i class="fa fa-spinner fa-2x fa-spin"></i>
+</div>
+<div id="content" style="display: none;">
+    <div class="flex-table">
+        <div>
+            <div><i class="fa fa-address-book"></i> 姓名</div>
+            <div><input type="text" id="input_name" class="form-control"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-phone"></i> 联系方式</div>
+            <div><input type="tel" id="input_contact" class="form-control"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-id-card"></i> 信用值</div>
+            <div><input type="text" id="input_credit" disabled class="form-control"></div>
+        </div>
+    </div>
+    <button id="btn_save" class="btn btn-primary">保存</button>
+    <button id="btn_reset" class="btn btn-default">重置</button>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var showInfo = function () {
+            $('#input_name').val(uservo.name);
+            $('#input_contact').val(uservo.contact);
+            $('.loading-inline').fadeOut(200, function () {
+                $('#content').fadeIn(200);
+            });
+        };
+
+        var uservo;
+        $('#btn_reset').click(showInfo);
+        // load user info
+        app.requests.post('UserBL/get', [''], function (resp) {
+            uservo = resp;
+            showInfo();
+        }, function () {
+            app.view.showError('加载用户信息失败: 发生网络通信错误');
+        });
+        // load credit
+        app.requests.post('CreditRecordBL/get', [''], function (resp) {
+            $('#input_credit').val(resp[0].creditResult.toFixed(2));
+        }, function () {
+            app.view.showError('加载信用值失败: 发生网络通信错误');
+        });
+    })();
+</script>

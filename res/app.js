@@ -23,10 +23,14 @@ var app = {
     session: {
         key: 'session',
         set: function (sess) {
-            sessionStorage.setItem(this.key, sess);
+            sessionStorage.setItem(this.key, JSON.stringify(sess));
         },
         get: function () {
-            return sessionStorage.getItem(this.key);
+            try {
+                return JSON.parse(sessionStorage.getItem(this.key));
+            } catch (e) {
+                return null;
+            }
         },
     },
 
@@ -59,10 +63,25 @@ var app = {
     view: {
         showError: function (message) {
             var dialog = $('#dialog');
-            dialog.find('.modal-title').html('<span class="glyphicon glyphicon-remove"></span> 错误提示');
+            dialog.find('.modal-title').html('<span class="error"><span class="glyphicon glyphicon-remove"></span> 错误提示</span>');
             dialog.find('p').html(message);
             dialog.modal();
-        }
+            dialog.on('shown.bs.modal', function () {
+                $(this).addClass('shake');
+            });
+        },
+        loadView: function (url) {
+            var main = $('#main');
+            var load = function () {
+                main.load('views/' + url + '.html');
+                main.fadeIn(250);
+            };
+            if (main.css('display') != 'none') {
+                main.fadeOut(250, load);
+            } else {
+                load();
+            }
+        },
     },
 };
 

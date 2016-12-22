@@ -4,48 +4,76 @@
     <meta charset="UTF-8">
     <title>酒店管理系统</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="res/bootstrap/css/bootstrap-theme.min.css">
     <link rel="stylesheet" type="text/css" href="res/index.css">
     <script type="text/javascript" src="res/jquery.min.js"></script>
     <script type="text/javascript" src="res/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="res/app.js"></script>
 </head>
 <body>
-    <div id="main_container">
+<div id="main_container" style="display: none;">
+    <div>
         <div>
-            <div>
-                <img src="res/images/title-h.png">
-            </div>
-            <div id="userinfo">
-                demo<br>客户
-            </div>
-            <span class="glyphicon glyphicon-user"></span>
+            <img src="res/images/title-h.png">
         </div>
+        <div id="userinfo">
+            demo<br>客户
+        </div>
+        <i class="fa fa-user-circle-o"></i>
+    </div>
 
+    <div>
         <div>
-            <div id="nav">
-                <ul class="nav nav-stacked">
-                    <li role="presentation" class="active">
-                        <a href="#"><span class="glyphicon glyphicon-user"></span>基本信息</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#"><span class="glyphicon glyphicon-signal"></span>信用记录</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#"><span class="glyphicon glyphicon-search"></span>酒店搜索</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#"><span class="glyphicon glyphicon-th-list"></span>我的订单</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#"><span class="glyphicon glyphicon-star"></span>会员登记</a>
-                    </li>
-                </ul>
+            <ul class="nav nav-stacked" id="nav"></ul>
+        </div>
+        <div id="main" style="display: none;"></div>
+    </div>
+</div>
+
+<div id="loading">
+    <i class="fa fa-spinner fa-5x fa-spin"></i>
+</div>
+
+<div id="dialog" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title"></h4>
             </div>
-            <div id="main">
-                Main contents should be here.
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var nav = $('#nav');
+        nav.on('click', 'li', function () {
+            nav.find('li').removeClass('active');
+            $(this).addClass('active');
+            app.view.loadView($(this).attr('data-view'));
+        });
+
+        // main
+        // check session
+        var session = app.session.get();
+        if (!session) {
+            location = 'login.html';
+        } else {
+            $('#userinfo').html(session.username + '<br>' + session.userType);
+            nav.load('views/navigation/' + session.userType + '.html');
+        }
+        // show main view
+        setTimeout(function () {
+            $('#loading').fadeOut(500);
+            $('#main_container').fadeIn(500);
+        }, 500);
+    })();
+</script>
 </body>
 </html>

@@ -1,15 +1,7 @@
-body {
-  font-family: "Pingfang SC", "Heiti SC", "Source Han Sans SC", "Microsoft Yahei", Helvetica, Arial, sans-serif;
-  background-image: url("images/bg.jpg");
-  background-size: cover;
-}
-#loading {
-  position: absolute;
-  width: 100%;
-  top: 150px;
-  text-align: center;
-  color: whitesmoke;
-}
+@import "bootstrap/css/bootstrap.min.css";
+@import "bootstrap/css/bootstrap-theme.min.css";
+@import "bootstrap/css/font-awesome.min.css";
+@import "common.css";
 #login_container {
   width: 500px;
   margin: 100px auto 0 auto;
