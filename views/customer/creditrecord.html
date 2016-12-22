@@ -1,0 +1,43 @@
+<style type="text/css">
+    #table {
+        background-color: whitesmoke;
+    }
+</style>
+
+<div class="title">信用记录</div>
+<div class="loading-inline">
+    <i class="fa fa-refresh fa-2x fa-spin"></i>
+</div>
+<div id="content" style="display: none;">
+    <table id="table" class="table">
+        <tr>
+            <th>时间</th>
+            <th>动作</th>
+            <th>信用值变化</th>
+            <th>信用值结果</th>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        // load records
+        app.requests.post('CreditRecordBL/get', [''], function (resp) {
+            for (var key in resp) {
+                var record = resp[key];
+                var time = '';
+                if (record.timestamp) {
+                    time = record.timestamp.date.year + '/' + record.timestamp.date.month + '/' + record.timestamp.date.day +
+                            ' ' + record.timestamp.time.hour + ':' + record.timestamp.time.minute + ':' + record.timestamp.time.second;
+                }
+                if (record.diff > 0) {
+                    record.diff = '+' + record.diff;
+                }
+                $('#table').append('<tr><td>' + time + '</td><td>' + app.models.creditaction[record.action] + '</td><td>' + record.diff + '</td><td>' + record.creditResult + '</td></tr>');
+            }
+            $('.loading-inline').fadeOut(200, function () {
+                $('#content').fadeIn(200);
+            });
+        });
+    })();
+</script>

@@ -64,11 +64,13 @@ body {
 }
 #main_container > :last-child > :last-child {
   flex: 1;
+  overflow-y: scroll;
   padding: 15px 30px;
 }
 #main_container > :last-child > :last-child .title {
   color: #0277BD;
   font-size: 36px;
+  margin-bottom: 10px;
 }
 #main_container > :last-child > :last-child .flex-table > div {
   display: flex;

@@ -65,7 +65,7 @@
         if (!session) {
             location = 'login.html';
         } else {
-            $('#userinfo').html(session.username + '<br>' + session.userType);
+            $('#userinfo').html(session.username + '<br>' + app.models.usertype[session.userType]);
             nav.load('views/navigation/' + session.userType + '.html');
         }
         // show main view

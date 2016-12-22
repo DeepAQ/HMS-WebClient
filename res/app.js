@@ -84,6 +84,24 @@ var app = {
             }
         },
     },
+
+    // Models
+    models: {
+        usertype: {
+            CUSTOMER: '客户',
+            HOTEL_STAFF: '酒店工作人员',
+            WEBSITE_MARKETER: '网站营销人员',
+            WEBSITE_MASTER: '网站管理人员'
+        },
+        creditaction: {
+            ORIGINAL: '初始信用值',
+            ORDER_FINISHED: '完成订单',
+            ORDER_CANCELLED: '撤销未执行订单',
+            ORDER_DELAYED: '订单逾期未执行',
+            ORDER_UNDO: '撤销异常订单返还',
+            CREDIT_TOPUP: '信用充值'
+        }
+    },
 };
 
 // SHA-256 encryptor
