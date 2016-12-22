@@ -83,6 +83,29 @@ var app = {
                 load();
             }
         },
+        loadAreas: function (select_city, select_area, success) {
+            select_city.change(function () {
+                select_area.html('');
+                var selected_city = $(this).val();
+                for (var key in areas) {
+                    if (areas[key].cityName == selected_city) {
+                        select_area.append('<option value="' + areas[key].id + '">' + areas[key].areaName + '</option>');
+                    }
+                }
+            });
+            app.requests.post('HotelBL/getAllArea', [], function (resp) {
+                areas = resp;
+                for (var key in areas) {
+                    if (select_city.html().indexOf(areas[key].cityName) < 0) {
+                        select_city.append('<option value="' + areas[key].cityName + '">' + areas[key].cityName + '</option>');
+                    }
+                }
+                select_city.change();
+                success();
+            }, function () {
+                app.view.showError('无法加载城市和商圈列表: 发生网络通信错误');
+            });
+        },
     },
 
     // Models

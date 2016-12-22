@@ -80,3 +80,6 @@ body {
 #main_container > :last-child > :last-child .flex-table > div > :last-child {
   flex: 1;
 }
+#main_container > :last-child > :last-child .page {
+  display: none;
+}
