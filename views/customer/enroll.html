@@ -6,6 +6,31 @@
     .flex-table > div > :first-child {
         width: 110px;
     }
+    #description > div:first-child {
+        margin: 50px 0 0 0;
+        color: #0277BD;
+        font-size: 24px;
+    }
+    #description > div:last-child {
+        display: flex;
+    }
+    #description > div:last-child > div:first-child {
+        flex: 1;
+        padding: 10px 0;
+    }
+    #description > div:last-child > div:nth-child(2) {
+        border-left: #666666 solid 1px;
+        width: 20px;
+    }
+    #description > div:last-child > div:last-child {
+        flex: 1;
+        padding: 10px 0;
+    }
+    #description > div:last-child > div > div {
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 5px;
+    }
 </style>
 
 <div class="title">会员登记</div>
@@ -36,6 +61,25 @@
         </div>
     </div>
     <button id="btn_save" class="btn btn-primary"><i class="fa fa-lg fa-check-circle"></i> 提交</button>
+    <div id="description">
+        <div>成为会员好处都有啥？</div>
+        <div>
+            <div>
+                <div>个人会员</div>
+                <ul>
+                    <li>在生日时享受酒店的生日优惠</li>
+                    <li>积累信用值，提升会员等级，享受专属优惠</li>
+                </ul>
+            </div>
+            <div></div>
+            <div>
+                <div>企业会员</div>
+                <ul>
+                    <li>成为酒店的合作企业，享受合作企业优惠</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
