@@ -34,7 +34,7 @@ body {
   text-align: right;
 }
 #main_container > :first-child > :nth-child(3) {
-  padding-right: 30px;
+  padding-right: 40px;
   font-size: 36px;
 }
 #main_container > :last-child {
@@ -60,8 +60,7 @@ body {
   color: #333333;
 }
 #main_container > :last-child > :first-child li i {
-  width: 40px;
-  text-align: center;
+  margin-right: 5px;
 }
 #main_container > :last-child > :last-child {
   flex: 1;
@@ -75,10 +74,6 @@ body {
   display: flex;
   align-items: center;
   margin-top: 5px;
-}
-#main_container > :last-child > :last-child .flex-table > div i {
-  width: 30px;
-  text-align: center;
 }
 #main_container > :last-child > :last-child .flex-table > div > :last-child {
   flex: 1;

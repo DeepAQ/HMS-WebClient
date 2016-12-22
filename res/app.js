@@ -63,9 +63,9 @@ var app = {
     view: {
         showError: function (message) {
             var dialog = $('#dialog');
-            dialog.find('.modal-title').html('<span class="error"><span class="glyphicon glyphicon-remove"></span> 错误提示</span>');
+            dialog.find('.modal-title').html('<span class="error"><span class="fa fa-lg fa-times"></span> 错误提示</span>');
             dialog.find('p').html(message);
-            dialog.modal();
+            dialog.removeClass('shake').modal();
             dialog.on('shown.bs.modal', function () {
                 $(this).addClass('shake');
             });
@@ -73,7 +73,8 @@ var app = {
         loadView: function (url) {
             var main = $('#main');
             var load = function () {
-                main.load('views/' + url + '.html');
+                main.html('');
+                main.load('views/' + url + '.html?t=' + new Date().getTime());
                 main.fadeIn(250);
             };
             if (main.css('display') != 'none') {
