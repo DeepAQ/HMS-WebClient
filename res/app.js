@@ -40,10 +40,14 @@ var app = {
             var session = app.session.get();
             $.ajax({
                 type: 'POST',
+                timeout: 10000,
                 url: app.config.data.server + '/' + url + '/' + (session != null ? session.id : ''),
                 data: JSON.stringify(payload),
                 success: function (data) {
                     console.log(data);
+                    if (data == 'Invalid request') {
+                        window.location = 'login.html';
+                    }
                     try {
                         success(JSON.parse(data));
                     } catch (e) {

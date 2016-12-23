@@ -16,7 +16,7 @@
         display: flex;
         align-items: center;
         padding: 10px 0;
-        border-top: #333333 solid 1px;
+        border-top: #999999 solid 1px;
     }
     .hotel_info {
         flex: 1;
@@ -77,6 +77,10 @@
     <div id="result_container">
     </div>
 </div>
+<div class="page" id="detail">
+</div>
+<div class="page" id="order">
+</div>
 
 <script type="text/javascript">
     (function () {
@@ -91,7 +95,7 @@
             openPage('#search');
         });
         // search
-        var results = [];
+        var results = [], filtered_results = [];
         $('#btn_search').click(function () {
             $('#search').fadeOut(200, function () {
                 $('#loading-inline').fadeIn(200, function () {

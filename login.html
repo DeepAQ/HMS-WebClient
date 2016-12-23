@@ -101,7 +101,12 @@
         });
 
         // main
-        setTimeout(hideLoading, 500);
+        if (app.config.data.username && app.config.data.password) {
+            $('#check_remember').attr('checked', 'checked');
+            doLogin(app.config.data.username, app.config.data.password);
+        } else {
+            setTimeout(hideLoading, 500);
+        }
     })();
 </script>
 </body>

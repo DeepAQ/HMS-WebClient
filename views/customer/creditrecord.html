@@ -38,6 +38,8 @@
             $('.loading-inline').fadeOut(200, function () {
                 $('#content').fadeIn(200);
             });
+        }, function () {
+            app.view.showError('无法加载信用记录: 发生网络通信错误');
         });
     })();
 </script>
