@@ -74,19 +74,35 @@ var app = {
                 $(this).addClass('shake');
             });
         },
-        loadView: function (url) {
-            var main = $('#main');
-            var load = function () {
-                main.html('');
-                main.load('views/' + url + '.html?t=' + new Date().getTime());
-                main.fadeIn(250);
-            };
-            if (main.css('display') != 'none') {
-                main.fadeOut(250, load);
+        params: {},
+        loadView: function (url, params) {
+            $('#main').empty();
+            this.loadViewOverlay(url, params);
+        },
+        loadViewOverlay: function (url, params) {
+            this.params = params;
+            var main = $('#main'),
+                views = main.find('>div'),
+                load = function () {
+                    main.append('<div></div>').find('>div').last()
+                        .load('views/' + url + '.html?t=' + new Date().getTime())
+                        .fadeIn(250);
+                };
+            if (views.length > 0) {
+                views.last().fadeOut(250, load);
             } else {
                 load();
             }
         },
+        closeView: function () {
+            var views = $('#main').find('>div');
+            if (views.length > 0) {
+                views.last().fadeOut(200, function () {
+                    $(this).remove();
+                })
+            }
+        },
+
         loadAreas: function (select_city, select_area, success) {
             select_city.change(function () {
                 select_area.html('');

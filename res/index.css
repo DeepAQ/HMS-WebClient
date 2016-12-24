@@ -64,22 +64,26 @@ body {
 }
 #main_container > :last-child > :last-child {
   flex: 1;
+}
+#main_container > :last-child > :last-child > div {
+  width: 100%;
+  height: 100%;
   overflow-y: scroll;
   padding: 15px 30px;
 }
-#main_container > :last-child > :last-child .title {
+#main_container > :last-child > :last-child > div .title {
   color: #0277BD;
   font-size: 36px;
   margin-bottom: 10px;
 }
-#main_container > :last-child > :last-child .flex-table > div {
+#main_container > :last-child > :last-child > div .flex-table > div {
   display: flex;
   align-items: center;
   margin-top: 5px;
 }
-#main_container > :last-child > :last-child .flex-table > div > :last-child {
+#main_container > :last-child > :last-child > div .flex-table > div > :last-child {
   flex: 1;
 }
-#main_container > :last-child > :last-child .page {
+#main_container > :last-child > :last-child > div .page {
   display: none;
 }

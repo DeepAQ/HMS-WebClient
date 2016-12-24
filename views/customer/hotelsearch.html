@@ -84,9 +84,10 @@
 
 <script type="text/javascript">
     (function () {
-        var openPage = function (page) {
+        var openPage = function (page, callback) {
+            $('.page').fadeOut(200);
             $('#loading-inline').fadeOut(200, function () {
-                $(page).fadeIn(200);
+                $(page).fadeIn(200, callback);
             });
         };
         // ----- Page: search -----
@@ -97,23 +98,21 @@
         // search
         var results = [], filtered_results = [];
         $('#btn_search').click(function () {
-            $('#search').fadeOut(200, function () {
-                $('#loading-inline').fadeIn(200, function () {
-                    app.requests.post('HotelBL/search', [$('#select_area').val()], function (resp) {
-                        results = resp;
-                        show_results(results);
-                        openPage('#result');
-                    }, function () {
-                        app.view.showError('搜索酒店失败: 发生网络通信错误');
-                    });
+            openPage('#loading-inline', function () {
+                app.requests.post('HotelBL/search', [$('#select_area').val()], function (resp) {
+                    results = resp;
+                    show_results(results);
+                    openPage('#result');
+                }, function () {
+                    app.view.showError('搜索酒店失败: 发生网络通信错误');
                 });
             });
         });
 
         // ----- Page: result -----
         // show results
+        var container = $('#result_container');
         var show_results = function (res) {
-            var container = $('#result_container');
             container.html('');
             for (var key in res) {
                 var hotel = res[key];
@@ -197,6 +196,12 @@
                 }
             });
             show_results(sorted_results);
+        });
+        // detail & order
+        container.on('click', '.btn-primary', function () {
+            var key = $(this).parent().parent().parent().attr('data-key');
+        }).on('click', '.btn-danger', function () {
+            alert($(this).parent().parent().parent().attr('data-key'));
         });
     })();
 </script>
