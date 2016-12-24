@@ -86,10 +86,10 @@ var app = {
                 load = function () {
                     main.append('<div></div>').find('>div').last()
                         .load('views/' + url + '.html?t=' + new Date().getTime())
-                        .fadeIn(250);
+                        .fadeIn(200);
                 };
             if (views.length > 0) {
-                views.last().fadeOut(250, load);
+                views.last().fadeOut(200, load);
             } else {
                 load();
             }
@@ -99,6 +99,7 @@ var app = {
             if (views.length > 0) {
                 views.last().fadeOut(200, function () {
                     $(this).remove();
+                    views.eq(views.length - 2).fadeIn(200);
                 })
             }
         },
@@ -126,6 +127,9 @@ var app = {
                 app.view.showError('无法加载城市和商圈列表: 发生网络通信错误');
             });
         },
+        formatDate: function (date) {
+            return date.year + '/' + date.month + '/' + date.day;
+        }
     },
 
     // Models
@@ -143,7 +147,15 @@ var app = {
             ORDER_DELAYED: '订单逾期未执行',
             ORDER_UNDO: '撤销异常订单返还',
             CREDIT_TOPUP: '信用充值'
-        }
+        },
+        orderstate: {
+            BOOKED: "未入住",
+            UNFINISHED: "已入住",
+            FINISHED: "已完成",
+            RANKED: "已完成并评价",
+            DELAYED: "异常(逾期)",
+            UNDO: "已撤销"
+        },
     },
 };
 

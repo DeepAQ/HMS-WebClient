@@ -2,14 +2,14 @@ body {
   font-family: "Pingfang SC", "Heiti SC", "Source Han Sans SC", "Microsoft Yahei", Helvetica, Arial, sans-serif;
   background-image: url("images/bg.jpg");
   background-size: cover;
-}
 
-#loading {
-  position: absolute;
-  width: 100%;
-  top: 150px;
-  text-align: center;
-  color: whitesmoke;
+  > #loading {
+    position: absolute;
+    width: 100%;
+    top: 150px;
+    text-align: center;
+    color: whitesmoke;
+  }
 }
 
 @keyframes shake {
@@ -36,6 +36,6 @@ body {
   color: crimson;
 }
 
-.btn, .form-control, .alert, .modal-content, .nav-pills>li>a {
+.btn, .form-control, .label, .alert, .modal-content, .nav-pills>li>a {
   border-radius: 0;
 }

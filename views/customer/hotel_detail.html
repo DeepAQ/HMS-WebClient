@@ -1,0 +1,137 @@
+<style type="text/css">
+    #view_hd #hotel_title {
+        font-size: 36px;
+        color: #0277BD;
+        margin-top: 10px;
+    }
+
+    #view_hd .part {
+        font-size: 24px;
+        color: #666666;
+        border-left: #666666 solid 8px;
+        margin: 10px 0;
+        padding-left: 10px;
+    }
+
+    #view_hd .flex-table {
+        margin-left: 20px;
+        line-height: 200%;
+    }
+
+    #view_hd .flex-table > div > :first-child {
+        width: 100px;
+    }
+
+    #view_hd table {
+        background-color: whitesmoke;
+    }
+
+    #view_hd #table_rooms td:nth-child(2) {
+        color: orangered;
+        font-size: 18px;
+    }
+
+    #view_hd #table_ranks td:nth-child(2) {
+        color: green;
+    }
+</style>
+
+<div id="view_hd">
+    <div>
+        <button class="btn btn-primary" onclick="app.view.closeView();">
+            <i class="fa fa-lg fa-angle-left"></i> 返回
+        </button>
+    </div>
+
+    <div id="hotel_title"></div>
+
+    <div class="part">酒店信息</div>
+    <div class="flex-table">
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-location-arrow"></i> 地址</div>
+            <div id="hotel_address"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-file-text-o"></i> 简介</div>
+            <div id="hotel_description"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-gift"></i> 设施服务</div>
+            <div id="hotel_facilities"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-star"></i> 星级</div>
+            <div id="hotel_star"></div>
+        </div>
+    </div>
+
+    <div class="part">客房类型</div>
+    <table id="table_rooms" class="table">
+        <tr>
+            <th><i class="fa fa-lg fa-bed"></i> 房型</th>
+            <th style="width: 100px;"><i class="fa fa-lg fa-jpy"></i> 价格</th>
+            <th style="width: 100px;"><i class="fa fa-lg fa-cogs"></i> 操作</th>
+        </tr>
+    </table>
+
+    <div class="part">历史订单</div>
+    <table id="table_orders" class="table">
+        <tr>
+            <th><i class="fa fa-lg fa-calendar"></i> 日期</th>
+            <th style="width: 100px;"><i class="fa fa-lg fa-jpy"></i> 价格</th>
+            <th style="width: 120px;"><i class="fa fa-lg fa-cog"></i> 状态</th>
+            <th style="width: 100px;"><i class="fa fa-lg fa-cogs"></i> 操作</th>
+        </tr>
+    </table>
+
+    <div class="part">客户评价 (<span id="hotel_rank"></span> / 5.0)</div>
+    <table id="table_ranks" class="table">
+        <tr>
+            <th style="width: 120px;"><i class="fa fa-lg fa-calendar"></i> 日期</th>
+            <th style="width: 130px;"><i class="fa fa-lg fa-star-half-o"></i> 评价</th>
+            <th><i class="fa fa-lg fa-comments"></i> 评论内容</th>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var hotel = app.view.params,
+            view = $('#view_hd');
+        // basic info
+        view.find('#hotel_title').html(hotel.name);
+        view.find('#hotel_address').html(hotel.address);
+        view.find('#hotel_description').html(hotel.description);
+        view.find('#hotel_facilities').html(hotel.facilities);
+        view.find('#hotel_star').html(hotel.star);
+        // rooms
+        var table_rooms = view.find('#table_rooms');
+        for (var key in hotel.rooms) {
+            var room = hotel.rooms[key];
+            table_rooms.append('<tr><td>' + room.name + '</td><td>' + room.price + '</td>' +
+                '<td><button class="btn btn-sm btn-danger">预订 <i class="fa fa-lg fa-angle-right"></i></button></td></tr>');
+        }
+        // orders
+        var table_orders = view.find('#table_orders');
+        for (var key in hotel.orders) {
+            var order = hotel.orders[key];
+            table_orders.append('<tr><td>' + app.view.formatDate(order.startDate) + ' - ' + app.view.formatDate(order.endDate) +
+                '</td><td>' + order.price + '</td><td>' + app.models.orderstate[order.state] + '</td>' +
+                '<td><button class="btn btn-sm btn-info">详情 <i class="fa fa-lg fa-angle-right"></i></button></td></tr>');
+        }
+        // ranks
+        view.find('#hotel_rank').html(hotel.avg_rank.toFixed(1));
+        var table_ranks = view.find('#table_ranks');
+        for (var key in hotel.ranks) {
+            var rank = hotel.ranks[key],
+                rank_star = '';
+            for (var i = 1; i <= rank.rank; i++) {
+                rank_star += '<i class="fa fa-lg fa-star"></i>';
+            }
+            for (var i = rank.rank; i < 5; i++) {
+                rank_star += '<i class="fa fa-lg fa-star-o"></i>';
+            }
+            table_ranks.append('<tr><td>' + app.view.formatDate(rank.date) + '</td><td>' + rank_star + '</td><td>' + rank.comment + '</td></tr>');
+        }
+    })();
+</script>
