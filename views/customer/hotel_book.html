@@ -1,0 +1,182 @@
+<style type="text/css">
+    #view_hb #hotel_title {
+        font-size: 36px;
+        color: #0277BD;
+        margin-top: 10px;
+    }
+
+    #view_hb #hotel_address {
+        font-size: 16px;
+        color: gray;
+    }
+
+    #view_hb .part {
+        font-size: 24px;
+        color: #666666;
+        border-left: #666666 solid 8px;
+        margin: 10px 0;
+        padding-left: 10px;
+    }
+
+    #view_hb .flex-table {
+        margin-left: 20px;
+        line-height: 200%;
+    }
+
+    #view_hb .flex-table > div > :first-child {
+        width: 110px;
+    }
+
+    #view_hb #input_num {
+        width: 70px;
+    }
+
+    #view_hb #base_price, #view_hb #final_price {
+        color: orangered;
+    }
+
+    #view_hb #final_price {
+        font-size: 36px;
+    }
+</style>
+
+<div id="view_hb">
+    <div>
+        <button class="btn btn-default" onclick="app.view.closeView();">
+            <i class="fa fa-lg fa-angle-left"></i> 返回
+        </button>
+    </div>
+
+    <div id="hotel_title"></div>
+    <div id="hotel_address"></div>
+
+    <div class="part">预订信息</div>
+    <div class="flex-table">
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-calendar"></i> 日期</div>
+            <div class="form-inline">
+                <input type="date" id="date_start" class="form-control"> -
+                <input type="date" id="date_end" class="form-control">
+            </div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-bed"></i> 房型</div>
+            <div class="form-inline">
+                <select id="select_room" class="form-control"></select>
+                <input type="number" min="1" value="1" id="input_num" class="form-control"> 间
+            </div>
+        </div>
+        <div>
+            <div></div>
+            <div>共 <span id="date_count">1</span> 晚，原价 <span id="base_price"></span></div>
+        </div>
+    </div>
+
+    <div class="part">入住信息</div>
+    <div class="flex-table">
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-calendar"></i> 儿童</div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default">有</button>
+                <button type="button" class="btn btn-default btn-primary">无</button>
+            </div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-bed"></i> 入住人员</div>
+            <div class="form-inline" id="persons">
+                <input type="text" class="form-control" placeholder="入住人姓名">
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <div></div>
+            <div>
+                <button id="btn_next" class="btn btn-primary">下一步 <i class="fa fa-lg fa-angle-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var hotel = app.view.params.hotel,
+            room_id = app.view.params.room_id,
+            view = $('#view_hb');
+        // basic info
+        view.find('#hotel_title').html(hotel.name);
+        view.find('#hotel_address').html(hotel.address);
+        var select_room = view.find('#select_room');
+        for (var key in hotel.rooms) {
+            var room = hotel.rooms[key];
+            select_room.append('<option value="' + room.id + '">' + room.name + '（¥' + room.price + '/晚）</option>');
+        }
+        if (room_id) {
+            select_room.val(room_id);
+        }
+        // default values
+        var date_start = view.find('#date_start'),
+            date_end = view.find('#date_end'),
+            today = new Date(),
+            tomorrow = new Date(),
+            has_children = false;
+        tomorrow.setTime(today.getTime() + 24 * 3600000);
+        date_start.val(today.toISOString().slice(0, 10));
+        date_end.val(tomorrow.toISOString().slice(0, 10));
+        // children
+        view.find('.btn-group button').click(function () {
+            $(this).parent().children().removeClass('btn-primary');
+            $(this).addClass('btn-primary')
+            has_children = ($(this).html() == '有');
+        });
+        // persons
+        var persons_div = view.find('#persons');
+        persons_div.on('keyup', 'input', function () {
+            var inputs = persons_div.find('input');
+            for (var i = 0; i < inputs.length; i++) {
+                if ($.trim(inputs.eq(i).val()) == '') {
+                    return;
+                }
+            }
+            persons_div.append('<input type="text" class="form-control" placeholder="入住人姓名"> ');
+        });
+        // generate order
+        var order = {},
+            gen_order = function () {
+                // refresh view
+                var start_date = new Date(date_start.val()),
+                    end_date = new Date(date_end.val()),
+                    nights = Math.floor((end_date - start_date) / 24 / 3600000),
+                    room_id = select_room.val(),
+                    room_count = view.find('#input_num').val(),
+                    original_price = nights * room_count * hotel.rooms.filter(function (a) { return a.id == room_id; })[0].price;
+                view.find('#date_count').html(nights);
+                view.find('#base_price').html('¥' + original_price);
+                // get persons
+                var persons = [],
+                    inputs = persons_div.find('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    if ($.trim(inputs.eq(i).val()) != '') {
+                        persons.push($.trim(inputs.eq(i).val()));
+                    }
+                }
+                // generate vo
+                order = {
+                    id: 0,
+                    hotelId: hotel.id,
+                    startDate: {year: start_date.getFullYear(), month: start_date.getMonth() + 1, day: start_date.getDate()},
+                    endDate: {year: end_date.getFullYear(), month: end_date.getMonth() + 1, day: end_date.getDate()},
+                    roomId: room_id,
+                    roomCount: room_count,
+                    personCount: persons.length,
+                    persons: persons,
+                    hasChildren: false,
+                    price: original_price
+                };
+            };
+        gen_order();
+        view.find('input, select').change(gen_order);
+        view.find('#btn_next').click(function () {
+            gen_order();
+            app.view.loadViewOverlay('customer/hotel_book_price', order);
+        });
+    })();
+</script>

@@ -1,0 +1,119 @@
+<style type="text/css">
+    #view_hp .part {
+        font-size: 24px;
+        color: #666666;
+        border-left: #666666 solid 8px;
+        margin: 10px 0;
+        padding-left: 10px;
+    }
+
+    #view_hp .flex-table {
+        margin-left: 20px;
+        line-height: 200%;
+    }
+
+    #view_hp .flex-table > div > :first-child {
+        width: 110px;
+    }
+
+    #view_hp #final_price {
+        font-size: 36px;
+        color: orangered;
+    }
+</style>
+
+<div id="view_hp">
+    <div>
+        <button class="btn btn-default" onclick="app.view.closeView();">
+            <i class="fa fa-lg fa-angle-left"></i> 返回
+        </button>
+    </div>
+
+    <div class="part">订单价格</div>
+    <div id="loading">
+        <i class="fa fa-refresh fa-5x fa-spin"></i>
+    </div>
+    <div class="flex-table" style="display: none;">
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-jpy"></i> 原价</div>
+            <div id="original_price"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-jpy"></i> 酒店促销</div>
+            <div id="hotel_promo"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-jpy"></i> 网站促销</div>
+            <div id="web_promo"></div>
+        </div>
+        <div>
+            <div><i class="fa fa-fw fa-lg fa-jpy"></i> 订单总价</div>
+            <div id="final_price"></div>
+        </div>
+        <div style="margin-top: 20px;">
+            <div></div>
+            <div>
+                <button id="btn_confirm" class="btn btn-success">
+                    <i class="fa fa-lg fa-check-square-o"></i> 确认预订
+                </button>
+                <button class="btn btn-danger" onclick="app.view.closeView(2);">
+                    <i class="fa fa-lg fa-times"></i> 取消
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        var order = app.view.params,
+            view = $('#view_hp');
+        // get price
+        app.requests.post('OrderBL/getPrice', [order], function (resp) {
+            if (resp.result.result == 0) {
+                order.price = resp.finalPrice;
+                view.find('#original_price').html(resp.originalPrice);
+                view.find('#final_price').html(resp.finalPrice);
+                var price = resp.originalPrice;
+                if (resp.hotelPromotion) {
+                    view.find('#hotel_promo').html(- (1-resp.hotelPromotion.promotion) * price);
+                    price *= resp.hotelPromotion.promotion;
+                } else {
+                    view.find('#hotel_promo').html('暂无可用优惠');
+                }
+                if (resp.websitePromotion) {
+                    view.find('#web_promo').html(- (1-resp.websitePromotion.promotion) * price);
+                } else {
+                    view.find('#web_promo').html('暂无可用优惠');
+                }
+
+                view.find('#loading').fadeOut(200, function () {
+                    view.find('.flex-table').fadeIn(200);
+                });
+            } else {
+                app.view.showError(resp.result.message);
+                app.view.closeView();
+            }
+        }, function () {
+            app.view.showError('获取订单价格失败: 发生网络通信错误');
+            app.view.closeView();
+        });
+        // confirm
+        view.find('#btn_confirm').click(function () {
+            view.find('.flex-table').fadeOut(200, function () {
+                view.find('#loading').fadeIn(200);
+                app.requests.post('OrderBL/add', [order], function (resp) {
+                    if (resp.result == 0) {
+                        app.view.showInfo('预订成功，感谢您的支持！');
+                        app.view.closeView(2);
+                    } else {
+                        app.view.showError('预订失败: ' + resp.message);
+                        app.view.closeView();
+                    }
+                }, function () {
+                    app.view.showError('预订失败: 发生网络通信错误');
+                });
+            });
+        });
+    })();
+</script>

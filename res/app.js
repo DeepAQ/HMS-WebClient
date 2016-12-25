@@ -65,6 +65,12 @@ var app = {
 
     // Views
     view: {
+        showInfo: function (message) {
+            var dialog = $('#dialog');
+            dialog.find('.modal-title').html('<span class="fa fa-lg fa-info-circle"></span> 提示信息');
+            dialog.find('p').html(message);
+            dialog.modal();
+        },
         showError: function (message) {
             var dialog = $('#dialog');
             dialog.find('.modal-title').html('<span class="error"><span class="fa fa-lg fa-times"></span> 错误提示</span>');
@@ -74,6 +80,8 @@ var app = {
                 $(this).addClass('shake');
             });
         },
+
+
         params: {},
         loadView: function (url, params) {
             $('#main').empty();
@@ -84,7 +92,7 @@ var app = {
             var main = $('#main'),
                 views = main.find('>div'),
                 load = function () {
-                    main.append('<div></div>').find('>div').last()
+                    main.append('<div style="display: none;"></div>').find('>div').last()
                         .load('views/' + url + '.html?t=' + new Date().getTime())
                         .fadeIn(200);
                 };
@@ -94,12 +102,18 @@ var app = {
                 load();
             }
         },
-        closeView: function () {
+        closeView: function (num) {
+            if (!num) {
+                num = 1;
+            }
             var views = $('#main').find('>div');
             if (views.length > 0) {
                 views.last().fadeOut(200, function () {
-                    $(this).remove();
-                    views.eq(views.length - 2).fadeIn(200);
+                    views.eq(views.length - num - 1).fadeIn(200);
+                    while (num > 0) {
+                        views.eq(views.length - num).remove();
+                        num--;
+                    }
                 })
             }
         },

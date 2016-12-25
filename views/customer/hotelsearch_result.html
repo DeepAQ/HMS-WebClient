@@ -176,6 +176,7 @@
             app.view.loadViewOverlay('customer/hotel_detail', hotel);
         }).on('click', '.btn-danger', function () {
             var hotel = shown_results[$(this).parent().parent().parent().attr('data-key')];
+            app.view.loadViewOverlay('customer/hotel_book', {hotel: hotel});
         });
     })();
 </script>

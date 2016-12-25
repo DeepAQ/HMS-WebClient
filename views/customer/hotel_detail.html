@@ -109,7 +109,7 @@
         for (var key in hotel.rooms) {
             var room = hotel.rooms[key];
             table_rooms.append('<tr><td>' + room.name + '</td><td>' + room.price + '</td>' +
-                '<td><button class="btn btn-sm btn-danger">预订 <i class="fa fa-lg fa-angle-right"></i></button></td></tr>');
+                '<td><button class="btn btn-sm btn-danger" data-id="' + room.id + '">预订 <i class="fa fa-lg fa-angle-right"></i></button></td></tr>');
         }
         // orders
         var table_orders = view.find('#table_orders');
@@ -133,5 +133,9 @@
             }
             table_ranks.append('<tr><td>' + app.view.formatDate(rank.date) + '</td><td>' + rank_star + '</td><td>' + rank.comment + '</td></tr>');
         }
+        // buttons
+        table_rooms.find('button').click(function () {
+            app.view.loadViewOverlay('customer/hotel_book', {hotel: hotel, room_id: $(this).attr('data-id')});
+        });
     })();
 </script>
